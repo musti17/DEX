@@ -37,6 +37,16 @@ function Swap() {
     setisOpen(true);
   }
 
+  function modifyToken(i){
+    if(changeToken === 1){
+      settokenOne(tokenList[i]);
+    }
+      else{
+        settokenTwo(tokenList[i]);
+      }
+      setisOpen(false);
+    }
+
   const settings = (
     <>
       <div>Slippage Tolerance</div>
@@ -58,6 +68,23 @@ function Swap() {
         onCancel={() => setisOpen(false)}
         title="Select a token"
       >
+        <div className="modalContent">
+          {tokenList?.map((e, i) => {
+            return (
+              <div
+                className="tokenChoice"
+                key={i}
+                onClick={() => modifyToken(i)}
+              >
+                <img src={e.img} alt={e.ticker} className="tokenLogo" />
+                <div className="tokenChoiceNames">
+                  <div className="tokenName">{e.name}</div>
+                  <div className="tokenTicker">{e.ticker}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </Modal>
     <div className='tradeBox'>
       <div className='tradeBoxHeader'>
