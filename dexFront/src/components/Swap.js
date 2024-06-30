@@ -5,12 +5,15 @@ import {
   DownOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import tokenList from "../tokenList.json";
 
 function Swap() {
   
   const [slippage, setSlippage] = useState(2.5);
   const [tokenOneAmount, settokenOneAmount] = useState(null);
   const [tokenTwoAmount, settokenTwoAmount] = useState(null);
+  const [tokenOne, settokenOne] = useState(tokenList[0]);//setting to USDC by default
+  const [tokenTwo, settokenTwo] = useState(tokenList[1]);//setting to LINK by default
 
   function handleSlippageChange(e){
     setSlippage(e.target.value);
@@ -50,6 +53,16 @@ function Swap() {
       <div className='inputs'>
         <Input placeholder='0' value={tokenOneAmount} onChange={changeAmount}/>
         <Input placeholder='0' value={tokenTwoAmount} disabled={true} />
+        <div className='assetOne'>
+          <img src={tokenOne.img} alt='assetOneLogo' className='assetLogo'/>
+          {tokenOne.ticker}
+          <DownOutlined/>
+        </div>
+        <div className='assetTwo'>
+        <img src={tokenTwo.img} alt='assetOneLogo' className='assetLogo'/>
+          {tokenTwo.ticker}
+          <DownOutlined/>
+        </div>
       </div>
     </div>
   )
