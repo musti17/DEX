@@ -14,6 +14,8 @@ function Swap() {
   const [tokenTwoAmount, settokenTwoAmount] = useState(null);
   const [tokenOne, settokenOne] = useState(tokenList[0]);//setting to USDC by default
   const [tokenTwo, settokenTwo] = useState(tokenList[1]);//setting to LINK by default
+  const [isOpen, setisOpen] = useState(false);
+  const [changeToken, setchangeToken] = useState(1);
 
   function handleSlippageChange(e){
     setSlippage(e.target.value);
@@ -30,6 +32,11 @@ function Swap() {
     settokenTwo(one);
   }
 
+  function openModal(asset){
+    setchangeToken(asset);
+    setisOpen(true);
+  }
+
   const settings = (
     <>
       <div>Slippage Tolerance</div>
@@ -44,6 +51,14 @@ function Swap() {
   )
 
   return (
+    <>
+    <Modal
+        open={isOpen}
+        footer={null}
+        onCancel={() => setisOpen(false)}
+        title="Select a token"
+      >
+      </Modal>
     <div className='tradeBox'>
       <div className='tradeBoxHeader'>
         <h4>Swap</h4>
@@ -63,18 +78,19 @@ function Swap() {
         <div className="switchButton" onClick={switchTokens}>
             <ArrowDownOutlined className="switchArrow" />
           </div>
-        <div className='assetOne'>
+        <div className='assetOne' onClick={() => openModal(1)}>
           <img src={tokenOne.img} alt='assetOneLogo' className='assetLogo'/>
           {tokenOne.ticker}
           <DownOutlined/>
         </div>
-        <div className='assetTwo'>
+        <div className='assetTwo' onClick={() => openModal(2)}>
         <img src={tokenTwo.img} alt='assetOneLogo' className='assetLogo'/>
           {tokenTwo.ticker}
           <DownOutlined/>
         </div>
       </div>
     </div>
+    </>
   )
 }
 
