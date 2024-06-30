@@ -6,6 +6,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import tokenList from "../tokenList.json";
+import axios from "axios";
 
 function Swap() {
   
@@ -16,6 +17,7 @@ function Swap() {
   const [tokenTwo, settokenTwo] = useState(tokenList[1]);//setting to LINK by default
   const [isOpen, setisOpen] = useState(false);
   const [changeToken, setchangeToken] = useState(1);
+  const [prices, setprices] = useState(null);
 
   function handleSlippageChange(e){
     setSlippage(e.target.value);
@@ -23,13 +25,23 @@ function Swap() {
 
   function changeAmount(e){
     settokenOneAmount(e.target.value);
+    if(e.target.value && prices){
+      settokenTwoAmount((e.target.value * prices.ratio).toFixed(2))
+    }
+    else{
+      settokenTwoAmount(null)
+    }
   }
 
   function switchTokens(){
+    setprices(null);
+    settokenOneAmount(null);
+    settokenTwoAmount(null);
     const one = tokenOne;
     const two = tokenTwo;
     settokenOne(two);
     settokenTwo(one);
+    fetchPrices(two.address,one.address);
   }
 
   function openModal(asset){
@@ -38,14 +50,34 @@ function Swap() {
   }
 
   function modifyToken(i){
+    setprices(null);
+    settokenOneAmount(null);
+    settokenTwoAmount(null);
+  
     if(changeToken === 1){
       settokenOne(tokenList[i]);
+      fetchPrices(tokenList[i].address,tokenTwo.address);
     }
       else{
         settokenTwo(tokenList[i]);
+        fetchPrices(tokenOne.address,tokenList[i].address);
       }
       setisOpen(false);
     }
+
+    async function fetchPrices(one,two){
+      const res = await axios.get(`http://localhost:3001/tokenPrice`,{
+        params:{addressOne:one,addressTwo:two}
+      })
+
+      console.log(res.data);
+      setprices(res.data.usdPrices);
+    }
+
+    useEffect(() => {
+      fetchPrices(tokenList[0].address,tokenList[1].address)
+    }, [])
+    
 
   const settings = (
     <>
@@ -100,7 +132,7 @@ function Swap() {
       </div>
 
       <div className='inputs'>
-        <Input placeholder='0' value={tokenOneAmount} onChange={changeAmount}/>
+        <Input placeholder='0' value={tokenOneAmount} onChange={changeAmount} disabled={!prices}/>
         <Input placeholder='0' value={tokenTwoAmount} disabled={true} />
         <div className="switchButton" onClick={switchTokens}>
             <ArrowDownOutlined className="switchArrow" />
